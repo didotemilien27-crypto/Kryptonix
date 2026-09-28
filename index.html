@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KRYPTONIX — assistant personnel local, privé et gratuit</title>
+<meta name="description" content="KRYPTONIX est un assistant personnel qui tourne entièrement sur ta machine : cerveau local (Ollama), mémoire permanente, voix, documents, météo, actualités et bien plus. Aucun compte, aucun abonnement.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fond:#06080d; --faille:#0b1018; --panneau:#0e141d; --arete:#1b2735;
+  --cristal:#8fd9ff; --cristal-sourd:#4a7f9c; --givre:#e6f1f8; --texte:#b9c9d6;
+  --sourd:#5d6e7e; --ambre:#ffc266; --signal:#ff4d4d;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --titre:'Chakra Petch','Segoe UI',system-ui,sans-serif;
+  box-sizing:border-box;
+}
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--fond); color:var(--texte); font-family:var(--titre);
+  line-height:1.6;
+  background-image:
+    radial-gradient(ellipse at 15% -10%,rgba(143,217,255,.12),transparent 55%),
+    radial-gradient(ellipse at 100% 20%,rgba(255,77,77,.06),transparent 50%);
+}
+a{color:var(--cristal)}
+img{max-width:100%;display:block}
+.enveloppe{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* --- en-tête --- */
+header{position:sticky;top:0;z-index:10;background:rgba(6,8,13,.86);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--arete)}
+.barre-nav{display:flex;align-items:center;gap:16px;padding:16px 0}
+.barre-nav img{width:30px;height:30px}
+.barre-nav h1{font-size:1.1rem;letter-spacing:.3em;color:var(--givre)}
+.barre-nav h1 span{color:var(--cristal);text-shadow:0 0 14px rgba(143,217,255,.6)}
+.nav-liens{margin-left:auto;display:flex;gap:22px;align-items:center;font-family:var(--mono);font-size:.82rem}
+.nav-liens a{color:var(--texte);text-decoration:none}
+.nav-liens a:hover{color:var(--cristal)}
+.bouton{
+  display:inline-block;border:1px solid var(--cristal);color:var(--cristal)!important;
+  padding:11px 22px;font-family:var(--mono);font-size:.82rem;letter-spacing:.08em;
+  text-decoration:none;transition:background .2s,color .2s;
+}
+.bouton:hover{background:var(--cristal);color:var(--fond)!important}
+.bouton.plein{background:var(--cristal);color:var(--fond)!important}
+.bouton.plein:hover{background:transparent;color:var(--cristal)!important}
+
+/* --- héro --- */
+.hero{padding:90px 0 60px;text-align:center}
+.hero img{width:64px;margin:0 auto 22px;filter:drop-shadow(0 0 22px rgba(143,217,255,.45))}
+.hero h2{font-size:clamp(2.1rem,5vw,3.4rem);letter-spacing:.08em;color:var(--givre);margin-bottom:18px}
+.hero h2 span{color:var(--cristal)}
+.hero p.accroche{max-width:640px;margin:0 auto 36px;color:var(--texte);font-size:1.05rem}
+.hero .actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.hero .puces{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-family:var(--mono);
+  font-size:.74rem;color:var(--sourd);letter-spacing:.05em}
+.hero .puces span::before{content:"● ";color:var(--cristal-sourd)}
+
+/* --- faux terminal animé --- */
+.terminal{
+  max-width:640px;margin:50px auto 0;background:var(--panneau);border:1px solid var(--arete);
+  text-align:left;box-shadow:0 0 40px rgba(143,217,255,.06);
+}
+.terminal .barre{display:flex;gap:7px;padding:10px 14px;border-bottom:1px solid var(--arete)}
+.terminal .point{width:9px;height:9px;border-radius:50%;background:var(--arete)}
+.terminal .corps{padding:20px 22px;min-height:190px;font-family:var(--mono);font-size:.86rem}
+.terminal .ligne{margin-bottom:10px;white-space:pre-wrap}
+.terminal .toi{color:var(--sourd)}
+.terminal .toi::before{content:"toi » ";color:var(--cristal-sourd)}
+.terminal .lui{color:var(--cristal)}
+.terminal .lui::before{content:"kryptonix » ";color:var(--givre)}
+.terminal .curseur::after{content:"▌";animation:clignote 1s steps(2) infinite}
+@keyframes clignote{50%{opacity:0}}
+
+/* --- sections --- */
+section{padding:64px 0}
+.titre-section{text-align:center;margin-bottom:44px}
+.titre-section h3{font-size:1.7rem;color:var(--givre);letter-spacing:.05em}
+.titre-section p{color:var(--sourd);margin-top:10px;font-size:.9rem}
+
+.grille-fonctions{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
+  background:var(--arete);border:1px solid var(--arete)}
+.carte{background:var(--panneau);padding:26px 22px}
+.carte .icone{font-size:1.6rem;margin-bottom:12px}
+.carte h4{color:var(--givre);font-size:.98rem;margin-bottom:8px;letter-spacing:.02em}
+.carte p{color:var(--sourd);font-size:.84rem}
+
+.etapes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px}
+.etape{border:1px solid var(--arete);padding:26px 22px;background:var(--panneau);position:relative}
+.etape .n{font-family:var(--mono);color:var(--cristal-sourd);font-size:.78rem;letter-spacing:.1em;margin-bottom:10px}
+.etape h4{color:var(--givre);margin-bottom:8px}
+.etape p{color:var(--sourd);font-size:.86rem}
+.etape code{color:var(--ambre);font-family:var(--mono);font-size:.8rem}
+
+.avertissement{
+  border-left:3px solid var(--ambre);background:var(--panneau);padding:18px 22px;
+  font-size:.86rem;color:var(--texte);max-width:760px;margin:0 auto;
+}
+.avertissement b{color:var(--ambre)}
+
+.cta-finale{text-align:center;padding:70px 0}
+.cta-finale h3{font-size:1.9rem;color:var(--givre);margin-bottom:16px}
+.cta-finale p{color:var(--sourd);margin-bottom:28px}
+
+footer{border-top:1px solid var(--arete);padding:30px 0;text-align:center;
+  font-family:var(--mono);font-size:.74rem;color:var(--sourd)}
+footer a{color:var(--cristal-sourd)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="enveloppe barre-nav">
+    <img src="logo.png" alt="Logo KRYPTONIX">
+    <h1>KRYPTONI<span>X</span></h1>
+    <nav class="nav-liens">
+      <a href="#fonctions">Fonctions</a>
+      <a href="#installation">Installation</a>
+      <a href="https://didotemilien27-crypto.github.io/kryptonix-telechargement/" class="bouton">Télécharger</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="enveloppe">
+    <img src="logo.png" alt="">
+    <h2>Ton IA. Ta machine.<br>Rien ne sort de <span>chez toi</span>.</h2>
+    <p class="accroche">
+      KRYPTONIX est un assistant personnel qui tourne entièrement en local :
+      cerveau Ollama, mémoire permanente, voix, documents, météo et
+      actualités en direct, sandbox de code — sans compte, sans abonnement,
+      sans donnée qui quitte ton ordinateur.
+    </p>
+    <div class="actions">
+      <a href="https://didotemilien27-crypto.github.io/kryptonix-telechargement/" class="bouton plein">Télécharger KRYPTONIX</a>
+      <a href="#fonctions" class="bouton">Découvrir les fonctions</a>
+    </div>
+    <div class="puces">
+      <span>100 % gratuit</span>
+      <span>100 % local</span>
+      <span>aucune clé API</span>
+      <span>open source</span>
+    </div>
+
+    <div class="terminal" aria-hidden="true">
+      <div class="barre"><span class="point"></span><span class="point"></span><span class="point"></span></div>
+      <div class="corps" id="corps-terminal"></div>
+    </div>
+  </div>
+</section>
+
+<section id="fonctions">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h3>Tout ce qu'il sait faire</h3>
+      <p>Un noyau unique, deux interfaces (HUD flottant et dashboard web), aucune dépendance cachée.</p>
+    </div>
+    <div class="grille-fonctions">
+      <div class="carte"><div class="icone">🧠</div><h4>Cerveau local</h4><p>Ollama (Mistral, Llama 3, Qwen...) tourne sur ta machine, avec mémoire de conversation et profil permanents.</p></div>
+      <div class="carte"><div class="icone">🎙️</div><h4>Voix</h4><p>Reconnaissance vocale et synthèse (edge-tts en ligne, pyttsx3 hors ligne) avec mot de réveil configurable.</p></div>
+      <div class="carte"><div class="icone">📄</div><h4>Documents & PDF</h4><p>Ingère PDF, TXT, code, logs… et permet d'interroger un document précis avec son contenu intégral.</p></div>
+      <div class="carte"><div class="icone">🌦️</div><h4>Météo en direct</h4><p>Prévisions réelles (Open-Meteo, gratuit, sans clé) pour ta ville, affichées en direct dans le dashboard.</p></div>
+      <div class="carte"><div class="icone">📰</div><h4>Fil d'actualités</h4><p>Flux RSS agrégés et résumés à la demande, bandeau défilant dans le dashboard.</p></div>
+      <div class="carte"><div class="icone">🛠️</div><h4>Diagnostic & nettoyage PC</h4><p>Télémétrie CPU/RAM/disque en direct, composants matériels, nettoyage sécurisé des fichiers temporaires.</p></div>
+      <div class="carte"><div class="icone">🧪</div><h4>Sandbox de code</h4><p>Exécute du Python isolé : accès réseau, système et écriture disque bloqués automatiquement.</p></div>
+      <div class="carte"><div class="icone">📝</div><h4>Rédaction de documents</h4><p>Génère Word, PDF, Excel, CSV ou HTML sur simple demande, avec lien de téléchargement direct.</p></div>
+      <div class="carte"><div class="icone">🕹️</div><h4>Petit jeu en réfléchissant</h4><p>Un mini-jeu d'arcade néon apparaît pendant que le cerveau planche sur ta question — pour patienter.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="installation">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h3>Comment ça marche</h3>
+      <p>Trois étapes, quinze minutes, aucune ligne de commande obligatoire une fois installé.</p>
+    </div>
+    <div class="etapes">
+      <div class="etape"><div class="n">01</div><h4>Installe Ollama</h4><p>Le cerveau de l'IA. Gratuit, sans compte : <code>ollama pull mistral</code> (ou <code>gemma:2b</code> sur une petite machine).</p></div>
+      <div class="etape"><div class="n">02</div><h4>Télécharge KRYPTONIX</h4><p>Décompresse l'archive, installe les dépendances Python avec <code>pip install -r requirements.txt</code>.</p></div>
+      <div class="etape"><div class="n">03</div><h4>Lance-le</h4><p><code>python lancer.py</code> — le dashboard s'ouvre dans ton navigateur, le HUD flottant apparaît.</p></div>
+    </div>
+    <div style="margin-top:36px" class="avertissement">
+      <b>Bon à savoir :</b> KRYPTONIX ne peut pas être "essayé en ligne" —
+      contrairement à un chatbot hébergé, son cerveau tourne sur ta machine.
+      La démonstration ci-dessus est un exemple d'échange rejoué, pas une IA
+      qui répond en direct sur cette page.
+    </div>
+  </div>
+</section>
+
+<section class="cta-finale">
+  <div class="enveloppe">
+    <h3>Prêt à l'installer chez toi ?</h3>
+    <p>Le fichier, le guide d'installation complet et l'historique des versions t'attendent sur la page de téléchargement.</p>
+    <a href="https://didotemilien27-crypto.github.io/kryptonix-telechargement/" class="bouton plein">Aller à la page de téléchargement →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="enveloppe">
+    KRYPTONIX — assistant personnel local, privé et gratuit ·
+    <a href="https://didotemilien27-crypto.github.io/kryptonix-telechargement/">Téléchargement</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+  const echanges = [
+    ["météo", "À Paris : ciel dégagé, 18° (ressenti 17°), vent à 12 km/h, humidité 54 %."],
+    ["retiens que mon lycée est Jean Moulin", "C'est gravé : lycée — Jean Moulin."],
+    ["crée un rapport sur la photosynthèse en pdf", "« rapport_photosynthese.pdf » est prêt. Lien de téléchargement disponible."],
+    ["télémétrie", "CPU 18 %, RAM 6.9/31.8 Go, disque 40 % utilisé. Tout est stable."],
+    ["actualités", "Les titres du moment — trois dépêches résumées, en direct."],
+  ];
+  const corps = document.getElementById('corps-terminal');
+  let i = 0;
+
+  function ecrireLigne(classe, texte, callback) {
+    const div = document.createElement('div');
+    div.className = 'ligne ' + classe + ' curseur';
+    corps.appendChild(div);
+    let j = 0;
+    const vitesse = classe === 'toi' ? 42 : 16;
+    const taper = () => {
+      div.textContent = texte.slice(0, j);
+      j++;
+      if (j <= texte.length) { setTimeout(taper, vitesse); }
+      else { div.classList.remove('curseur'); callback(); }
+    };
+    taper();
+  }
+
+  function tour() {
+    if (corps.children.length > 5) corps.innerHTML = '';
+    const [demande, reponse] = echanges[i % echanges.length];
+    i++;
+    ecrireLigne('toi', demande, () => {
+      setTimeout(() => ecrireLigne('lui', reponse, () => {
+        setTimeout(tour, 2200);
+      }), 350);
+    });
+  }
+  tour();
+})();
+</script>
+</body>
+</html>
